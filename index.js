@@ -6,7 +6,7 @@ const AppError = require('./utils/appError')
 const globalErrorHandler = require('./Controllers/errorController')
 
 const userRouter = require('./Routers/UserRouter')
-
+const tweetRouter = require('./Routers/tweetRouter')
 
 
 
@@ -41,7 +41,7 @@ app.use(express.json())
 
 
 app.use('/api/user',userRouter)
-
+app.use('/api/tweet',tweetRouter)
 
 
 app.all('*',(req,res,next)=>{

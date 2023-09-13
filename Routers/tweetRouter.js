@@ -10,11 +10,11 @@ app.use(morgan('dev'))
 app.use(express.json())
 
 
-router.post("/",usercontroller.protect, createTweet);
-router.delete("/:id",usercontroller.protect, deleteTweet);
-router.put("/:id/like",usercontroller.protect,likeOrDislike);
-router.get("/timeline/:id",usercontroller.protect,getAllTweets);
-router.get("/user/all/:id",usercontroller.protect, getUserTweets);
-router.get("/explore", getExploreTweets);
+router.post("/",usercontroller.protect, tweetcontroller.createTweet);
+// router.delete("/:id",usercontroller.protect, deleteTweet);
+// router.put("/:id/like",usercontroller.protect,likeOrDislike);
+// router.get("/timeline/:id",usercontroller.protect,getAllTweets);
+// router.get("/user/all/:id",usercontroller.protect, getUserTweets);
+// router.get("/explore", getExploreTweets);
 
 module.exports = router
