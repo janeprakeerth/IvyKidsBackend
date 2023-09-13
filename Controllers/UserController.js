@@ -1,0 +1,80 @@
+const User = require('../Models/userModel')
+const bcrypt = require('bcryptjs')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
+const catchAsync = require('./../utils/catchAsync')
+const AppError = require('./../utils/appError')
+
+
+exports.signUp = catchAsync(async(req,res,next)=>{
+    const newUser = await User.create(req.body)
+    const token = jwt.sign({id:newUser._id},process.env.JWT_SECRET,{
+        expiresIn:process.env.JWT_EXPIRES_IN
+    })
+    res.status(201).json({
+        message:"Success",
+        token:token,
+        body:newUser
+    }) 
+})
+
+exports.login = catchAsync(async(req,res,next)=>{
+    const email = req.body.email
+    console.log(req.body)
+    const pass = req.body.password
+    console.log(pass)
+    if(!email ||!pass){
+        return next(new AppError('Please send the emailId and password to the api',400))
+    }
+    const user = await User.findOne({email})
+    if(!user){
+        return next(new AppError('Please check your EmaiId',400)) 
+    }
+    const isValidPass = await bcrypt.compare(pass,user.password)
+    if(isValidPass){
+        const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{
+            expiresIn:process.env.JWT_EXPIRES_IN
+        })
+        res.status(200).json({
+            message:"Login Success",
+            token:token,
+            role:user.role,
+            userId:user._id
+        })
+    }else{
+        return next(new AppError('Incorrect EmaiId or Password',400))
+    }
+})
+
+exports.protect = catchAsync(async(req,res,next)=>{
+        let token
+        if(req.headers.authorization){
+            // getting the token
+            token =  req.headers.authorization
+            console.log(typeof(token))
+            console.log(token)
+            // verifying the token
+            const decoded = await jwt.verify(token,process.env.JWT_SECRET)
+            console.log(decoded)
+            // checking user exists
+            const user = await User.findById(decoded.id)
+            if(!user){
+                return next(new AppError('User No Longer Exists',404))
+            }
+            req.user  = user
+        }
+        if(!token){
+            return next(new AppError('You are not logged In',404))
+        }
+    next();
+})
+
+exports.restrictTo = (...roles)=>{ 
+    return (req,res,next)=>{
+            if(!roles.includes(req.user.role)){
+                console.log("no permission to access this route")
+                return next(new AppError('You do not have permission to this route',404))
+            }
+        next();
+    }
+}
