@@ -30,17 +30,22 @@ exports.likeOrDislike = catchAsync(async (req, res, next) => {
       const tweet = await Tweet.findById(req.params.id);
       if (!tweet.likes.includes(req.user._id)) {
         await tweet.updateOne({ $push: { likes: req.user._id } });
-        res.status(200).json("tweet has been liked");
+        res.status(200).json({
+            status:"Success",
+            message:"Tweet has been liked"
+        });
       } else {
         await tweet.updateOne({ $pull: { likes: req.user._id } });
-        res.status(200).json("tweet has been disliked");
+        res.status(200).json({
+            status:"Success",
+            message:"Tweet has been disliked"
+        });
       }
     
 })
 
-exports.getAllTweets = async (req, res, next) => {
-  try {
-    const currentUser = await User.findById(req.params.id);
+exports.getAllTweets = catchAsync(async (req, res, next) => {
+    const currentUser = await User.findById(req.user._id);
     const userTweets = await Tweet.find({ userId: currentUser._id });
     const followersTweets = await Promise.all(
       currentUser.following.map((followerId) => {
@@ -48,11 +53,8 @@ exports.getAllTweets = async (req, res, next) => {
       })
     );
 
-    res.status(200).json(userTweets.concat(...followersTweets));
-  } catch (err) {
-    handleError(500, err);
-  }
-};
+    res.status(200).json(userTweets.concat(...followersTweets)); 
+})
 
 // export const getUserTweets = async (req, res, next) => {
 //   try {
