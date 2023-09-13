@@ -8,6 +8,7 @@ const AppError = require('./../utils/appError')
 
 
 exports.createTweet = catchAsync(async (req, res, next) => {
+    req.body.userId = req.user._id
     const newTweet = new Tweet(req.body);
     const savedTweet = await newTweet.save();
     res.status(200).json({
