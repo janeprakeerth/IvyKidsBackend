@@ -46,6 +46,49 @@ exports.login = catchAsync(async(req,res,next)=>{
     }
 })
 
+exports.follow = catchAsync(async (req, res, next) => {
+      const user = await User.findById(req.params.id);
+      const currentUser = await User.findById(req.user._id);
+  
+      if (!user.followers.includes(req.user._id)) {
+        await user.updateOne({
+          $push: { followers: req.body.id },
+        });
+        await currentUser.updateOne({ $push: { following: req.params.id } });
+      } else {
+        res.status(403).json({
+            Status:"Fail",
+            message:"you already follow this user"
+        });
+      }
+      res.status(200).json({
+        Status:"Success",
+        message:"Following the user"
+      });
+    
+})
+  exports.unFollow = async (req, res, next) => {
+      const user = await User.findById(req.params.id);
+      const currentUser = await User.findById(req.body.id);
+
+      if (currentUser.following.includes(req.params.id)) {
+        await user.updateOne({
+          $pull: { followers: req.body.id },
+        });
+  
+        await currentUser.updateOne({ $pull: { following: req.params.id } });
+      } else {
+        res.status(403).json({
+            Status:"Fail",
+            message:"you are not following this user"
+        });
+      }
+      res.status(200).json({
+        Status:"Success",
+        message:"Unfollowing the user"
+      });
+};
+
 exports.protect = catchAsync(async(req,res,next)=>{
         let token
         if(req.headers.authorization){
