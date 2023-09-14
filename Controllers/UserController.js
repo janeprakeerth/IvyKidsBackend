@@ -92,12 +92,26 @@ exports.allUsers = catchAsync(async(req,res,next)=>{
     const users = await User.find()
     console.log(users)
     const userArray = [];
-    // for(let i=0;i<user.length;i++){
-
-    // }
+    for(let i=0;i<users.length;i++){
+        if(users[i]._id!=req.user._id){
+            if(users[i].followers.includes(req.user._id)){
+                const user  = {}
+                user.userName = users[i].name
+                user._id = users[i]._id
+                user.isFollowing = true
+                userArray.push(user)
+            }else{
+                const user  = {}
+                user.userName = users[i].name
+                user._id = users[i]._id
+                user.isFollowing = false
+                userArray.push(user)
+            }
+        }
+    }
     res.status(200).json({
         status:"Success",
-        users
+        users:userArray
     })
 })
 
