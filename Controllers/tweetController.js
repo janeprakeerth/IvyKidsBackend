@@ -18,9 +18,9 @@ exports.createTweet = catchAsync(async (req, res, next) => {
 })
 exports.deleteTweet = catchAsync(async (req, res, next) => {
       const tweet = await Tweet.findById(req.params.id);
-      if (tweet.userId === req.user._id) {
+      if (tweet.userId == req.user._id) {
         await tweet.deleteOne();
-        res.status(200).json("tweet has been deleted");
+        res.status(200).json({status:"Success",message:"Tweet Has been successfully deleted"});
       } else {
         next(new AppError("You are not allowed to delete this tweet as you are not the owner of it",500))
       }
@@ -52,7 +52,6 @@ exports.getAllTweets = catchAsync(async (req, res, next) => {
         return Tweet.find({ userId: followerId });
       })
     );
-
     res.status(200).json(userTweets.concat(...followersTweets)); 
 })
 
