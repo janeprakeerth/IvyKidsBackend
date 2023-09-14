@@ -14,6 +14,5 @@ router.post("/",usercontroller.protect, tweetcontroller.createTweet);
 router.delete("/:id",usercontroller.protect, tweetcontroller.deleteTweet);
 router.put("/like/:id",usercontroller.protect,tweetcontroller.likeOrDislike);
 router.get("/getAllTweets",usercontroller.protect,tweetcontroller.getAllTweets);
-router.get("/allUsers",usercontroller.protect,usercontroller.allUsers)
 
 module.exports = router

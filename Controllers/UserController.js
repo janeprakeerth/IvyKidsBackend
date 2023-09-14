@@ -90,6 +90,11 @@ exports.follow = catchAsync(async (req, res, next) => {
 })
 exports.allUsers = catchAsync(async(req,res,next)=>{
     const users = await User.find()
+    console.log(users)
+    const userArray = [];
+    // for(let i=0;i<user.length;i++){
+
+    // }
     res.status(200).json({
         status:"Success",
         users
