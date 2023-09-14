@@ -67,27 +67,34 @@ exports.follow = catchAsync(async (req, res, next) => {
       });
     
 })
-  exports.unFollow = async (req, res, next) => {
-      const user = await User.findById(req.params.id);
-      const currentUser = await User.findById(req.body.id);
+  exports.unFollow = catchAsync(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+    const currentUser = await User.findById(req.body.id);
 
-      if (currentUser.following.includes(req.params.id)) {
-        await user.updateOne({
-          $pull: { followers: req.body.id },
-        });
-  
-        await currentUser.updateOne({ $pull: { following: req.params.id } });
-      } else {
-        res.status(403).json({
-            Status:"Fail",
-            message:"you are not following this user"
-        });
-      }
-      res.status(200).json({
-        Status:"Success",
-        message:"Unfollowing the user"
+    if (currentUser.following.includes(req.params.id)) {
+      await user.updateOne({
+        $pull: { followers: req.body.id },
       });
-};
+
+      await currentUser.updateOne({ $pull: { following: req.params.id } });
+    } else {
+      res.status(403).json({
+          Status:"Fail",
+          message:"you are not following this user"
+      });
+    }
+    res.status(200).json({
+      Status:"Success",
+      message:"Unfollowing the user"
+    });
+})
+exports.allUsers = catchAsync(async(req,res,next)=>{
+    const users = await User.find()
+    res.status(200).json({
+        status:"Success",
+        users
+    })
+})
 
 exports.protect = catchAsync(async(req,res,next)=>{
         let token
