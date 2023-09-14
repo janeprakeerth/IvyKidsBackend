@@ -52,7 +52,23 @@ exports.getAllTweets = catchAsync(async (req, res, next) => {
         return Tweet.find({ userId: followerId });
       })
     );
-    res.status(200).json(userTweets.concat(...followersTweets)); 
+    const tweets = userTweets.concat(...followersTweets)
+    const tweetsArray = []
+    for(let i=0;i<tweets.length;i++){
+      const user = await User.findById(tweets[i].userId)
+      const tweet = {}
+      tweet._id = tweets[i]._id
+      tweet.userName = user.name
+      tweet.userId = user._id
+      tweet.description = tweets[i].description
+      tweet.likes = tweets[i].likes
+      tweet.likesize = tweets[i].likes.length
+      tweetsArray.push(tweet)
+    }
+    res.status(200).json({
+      status:"Success",
+      tweets:tweetsArray
+    }); 
 })
 
 // export const getUserTweets = async (req, res, next) => {
