@@ -22,8 +22,23 @@ exports.deleteTweet = catchAsync(async (req, res, next) => {
         await tweet.deleteOne();
         res.status(200).json({status:"Success",message:"Tweet Has been successfully deleted"});
       } else {
-        next(new AppError("You are not allowed to delete this tweet as you are not the owner of it",500))
+        next(new AppError("You are not allowed to delete this tweet as you are not the owner of it",404))
       }
+})
+
+exports.updateTweet = catchAsync(async(req,res,next)=>{
+  const tweet = await Tweet.findById(req.params.id)
+  if(tweet.userId!=req.user._id.toString()){
+    res.status(404).json({
+      status:"Fail",
+      message:"You are not update this delete this tweet"
+    })
+  }
+  const update = await Tweet.findByIdAndUpdate({_id:req.params.id},req.body)
+  res.status(200).json({
+    status:"Success",
+    message:"Tweet has been updated"
+  })
 })
 
 exports.likeOrDislike = catchAsync(async (req, res, next) => {
@@ -67,6 +82,7 @@ exports.getAllTweets = catchAsync(async (req, res, next) => {
     }
     res.status(200).json({
       status:"Success",
+      username:req.user.name,
       tweets:tweetsArray
     }); 
 })

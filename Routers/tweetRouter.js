@@ -11,6 +11,7 @@ app.use(express.json())
 
 
 router.post("/",usercontroller.protect, tweetcontroller.createTweet);
+router.put("/updateTweet/:id",usercontroller.protect,tweetcontroller.updateTweet)
 router.delete("/:id",usercontroller.protect, tweetcontroller.deleteTweet);
 router.put("/like/:id",usercontroller.protect,tweetcontroller.likeOrDislike);
 router.get("/getAllTweets",usercontroller.protect,tweetcontroller.getAllTweets);
