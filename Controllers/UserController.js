@@ -93,7 +93,8 @@ exports.allUsers = catchAsync(async(req,res,next)=>{
     console.log(users)
     const userArray = [];
     for(let i=0;i<users.length;i++){
-        if(users[i]._id!=req.user._id){
+    
+        if(users[i]._id!=req.user._id.toString()){
             if(users[i].followers.includes(req.user._id)){
                 const user  = {}
                 user.userName = users[i].name
