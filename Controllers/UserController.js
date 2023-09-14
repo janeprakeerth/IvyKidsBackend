@@ -70,11 +70,11 @@ exports.follow = catchAsync(async (req, res, next) => {
 })
   exports.unFollow = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id);
-    const currentUser = await User.findById(req.body.id);
+    const currentUser = await User.findById(req.user._id);
 
     if (currentUser.following.includes(req.params.id)) {
       await user.updateOne({
-        $pull: { followers: req.body.id },
+        $pull: { followers: req.user._id },
       });
 
       await currentUser.updateOne({ $pull: { following: req.params.id } });
