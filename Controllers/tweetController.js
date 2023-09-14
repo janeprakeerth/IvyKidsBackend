@@ -78,11 +78,12 @@ exports.getAllTweets = catchAsync(async (req, res, next) => {
       tweet.description = tweets[i].description
       tweet.likes = tweets[i].likes
       tweet.likesize = tweets[i].likes.length
+      tweet.createdAt = tweets[i].createdAt
       tweetsArray.push(tweet)
     }
     res.status(200).json({
       status:"Success",
-      username:req.user.name,
+      loggedInusername:req.user.name,
       tweets:tweetsArray
     }); 
 })
