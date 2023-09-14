@@ -48,11 +48,12 @@ exports.login = catchAsync(async(req,res,next)=>{
 
 exports.follow = catchAsync(async (req, res, next) => {
       const user = await User.findById(req.params.id);
+      console.log(user)
       const currentUser = await User.findById(req.user._id);
   
       if (!user.followers.includes(req.user._id)) {
         await user.updateOne({
-          $push: { followers: req.body.id },
+          $push: { followers: req.user._id }
         });
         await currentUser.updateOne({ $push: { following: req.params.id } });
       } else {
@@ -90,12 +91,11 @@ exports.follow = catchAsync(async (req, res, next) => {
 })
 exports.allUsers = catchAsync(async(req,res,next)=>{
     const users = await User.find()
-    console.log(users)
     const userArray = [];
     for(let i=0;i<users.length;i++){
     
         if(users[i]._id!=req.user._id.toString()){
-            if(users[i].followers.includes(req.user._id)){
+            if(users[i].followers.includes(req.user._id.toString())){
                 const user  = {}
                 user.userName = users[i].name
                 user._id = users[i]._id
