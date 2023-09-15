@@ -82,7 +82,7 @@ exports.getAllTweets = catchAsync(async (req, res, next) => {
       tweetsArray.push(tweet)
     }
     tweetsArray.sort(function(x,y){
-      return x.createdAt-y.createdAt;
+      return y.createdAt-x.createdAt;
     })
     res.status(200).json({
       status:"Success",
