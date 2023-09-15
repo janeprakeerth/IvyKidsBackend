@@ -81,6 +81,9 @@ exports.getAllTweets = catchAsync(async (req, res, next) => {
       tweet.createdAt = tweets[i].createdAt
       tweetsArray.push(tweet)
     }
+    tweetsArray.sort(function(x,y){
+      return x.createdAt-y.createdAt;
+    })
     res.status(200).json({
       status:"Success",
       loggedInusername:req.user.name,
